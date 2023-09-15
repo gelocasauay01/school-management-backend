@@ -15,22 +15,22 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gelo.student_management.dto.StudentDTO;
-import com.gelo.student_management.model.Student;
-import com.gelo.student_management.service.StudentService;
+import com.gelo.student_management.dto.SubjectClassDTO;
+import com.gelo.student_management.model.SubjectClass;
+import com.gelo.student_management.service.SubjectClassService;
 
 @RestController
-@RequestMapping("/api/student")
-public class StudentController {
+@RequestMapping("/api/subject-class")
+public class SubjectClassController {
     
     @Autowired
-    private StudentService studentService;
+    private SubjectClassService subjectClassService;
 
     @PostMapping
-    private ResponseEntity<Student> createStudent(@RequestBody StudentDTO newStudentDTO) {
-        ResponseEntity<Student> response;
+    private ResponseEntity<SubjectClass> createSubjectClass(@RequestBody SubjectClassDTO newSubjectClassDTO) {
+        ResponseEntity<SubjectClass> response;
         try {
-            response = new ResponseEntity<Student>(studentService.createStudent(newStudentDTO), HttpStatus.ACCEPTED);
+            response = new ResponseEntity<SubjectClass>(subjectClassService.createSubjectClass(newSubjectClassDTO), HttpStatus.ACCEPTED);
         } catch (ParseException parseException) {
             response = new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
@@ -38,10 +38,10 @@ public class StudentController {
     }
 
     @GetMapping
-    private ResponseEntity<List<Student>> getAllStudents() {
-        ResponseEntity<List<Student>> response;
+    private ResponseEntity<List<SubjectClass>> getAllSubjectClasss() {
+        ResponseEntity<List<SubjectClass>> response;
         try {
-            response = new ResponseEntity<List<Student>>(studentService.getAllStudents(), HttpStatus.ACCEPTED);
+            response = new ResponseEntity<List<SubjectClass>>(subjectClassService.getAllSubjectClasss(), HttpStatus.ACCEPTED);
         } catch (Exception e) {
             response = new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
@@ -49,10 +49,10 @@ public class StudentController {
     }
 
     @GetMapping("/{id}") 
-    private ResponseEntity<Student> getStudent(@PathVariable("id") Long id) {
-        ResponseEntity<Student> response;
+    private ResponseEntity<SubjectClass> getSubjectClass(@PathVariable("id") Long id) {
+        ResponseEntity<SubjectClass> response;
         try {
-            response = new ResponseEntity<Student>(studentService.getStudent(id), HttpStatus.ACCEPTED);
+            response = new ResponseEntity<SubjectClass>(subjectClassService.getSubjectClass(id), HttpStatus.ACCEPTED);
         } catch (Exception e) {
             response = new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
@@ -60,10 +60,10 @@ public class StudentController {
     }
 
     @PutMapping("/{id}") 
-    private ResponseEntity<Student> updateStudent(@PathVariable("id") Long id, @RequestBody StudentDTO updatedStudentDTO) {
-        ResponseEntity<Student> response;
+    private ResponseEntity<SubjectClass> updateSubjectClass(@PathVariable("id") Long id, @RequestBody SubjectClassDTO updatedSubjectClassDTO) {
+        ResponseEntity<SubjectClass> response;
         try {
-            response = new ResponseEntity<Student>(studentService.updateStudent(id, updatedStudentDTO), HttpStatus.ACCEPTED);
+            response = new ResponseEntity<SubjectClass>(subjectClassService.updateSubjectClass(id, updatedSubjectClassDTO), HttpStatus.ACCEPTED);
         } catch (Exception e) {
             response = new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
@@ -71,11 +71,11 @@ public class StudentController {
     }
 
     @DeleteMapping("/all")
-    private ResponseEntity<Boolean> deleteAllStudents() {
+    private ResponseEntity<Boolean> deleteAllSubjectClasss() {
         Boolean isSuccessful = true;
         HttpStatus statusCode = HttpStatus.ACCEPTED;
         try {
-            studentService.deleteAllStudents();
+            subjectClassService.deleteAllSubjectClasss();
         } catch(Exception e) {
             isSuccessful = false;
             statusCode = HttpStatus.BAD_REQUEST;
@@ -84,11 +84,11 @@ public class StudentController {
     }
 
     @DeleteMapping("/{id}")
-    private ResponseEntity<Boolean> deleteStudent(@PathVariable("id") Long id) {
+    private ResponseEntity<Boolean> deleteSubjectClass(@PathVariable("id") Long id) {
         Boolean isSuccessful = true;
         HttpStatus statusCode = HttpStatus.ACCEPTED;
         try {
-            studentService.deleteStudent(id);
+            subjectClassService.deleteSubjectClass(id);
         } catch(Exception e) {
             isSuccessful = false;
             statusCode = HttpStatus.BAD_REQUEST;

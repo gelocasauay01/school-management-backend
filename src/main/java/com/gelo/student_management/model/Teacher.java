@@ -1,11 +1,13 @@
 package com.gelo.student_management.model;
 
+import java.io.Serializable;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
-import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.SequenceGenerator;
 
 import lombok.Getter;
@@ -14,12 +16,12 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
-@Entity(name = "Teacher")
+@Entity
 @RequiredArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class Teacher {
+public class Teacher implements Serializable{
 
     @Id
     @SequenceGenerator(
@@ -33,8 +35,8 @@ public class Teacher {
     )
     private Long id;
 
-    @OneToOne
     @NonNull
-    @PrimaryKeyJoinColumn
+    @OneToOne
+    @JoinColumn(name = "personal_data_id", referencedColumnName = "id")
     private PersonalData personalData;
 }

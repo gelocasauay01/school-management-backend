@@ -9,6 +9,7 @@ import com.gelo.student_management.repository.AddressRepository;
 
 @Service
 public class AddressService {
+
     @Autowired private AddressRepository addressRepository;
 
     public Address createAddress(AddressDTO newAddressDTO) {

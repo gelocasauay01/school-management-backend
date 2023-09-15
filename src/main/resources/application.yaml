@@ -9,5 +9,8 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format-sql: true
+      javax:
+        persistence:
+          create-database-schema: true
     hibernate:
       ddl-auto: update

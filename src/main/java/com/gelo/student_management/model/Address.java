@@ -1,5 +1,7 @@
 package com.gelo.student_management.model;
 
+import java.io.Serializable;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -18,7 +20,7 @@ import lombok.NonNull;
 @NoArgsConstructor
 @Getter
 @Setter
-public class Address {
+public class Address implements Serializable{
     @Id
     @SequenceGenerator(
         name = "address_sequence",

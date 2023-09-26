@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.gelo.student_management.dao.FinalGrade;
+import com.gelo.student_management.dao.StudentRecordDao;
 import com.gelo.student_management.dto.StudentRecordDTO;
 import com.gelo.student_management.enums.RecordType;
 import com.gelo.student_management.exceptions.NoRecordsException;
@@ -23,22 +24,26 @@ public class StudentRecordService {
     @Autowired private StudentService studentService;
     @Autowired private SubjectClassService subjectClassService;
 
-    public StudentRecord createStudentRecord(StudentRecordDTO newStudentRecordDTO) throws ParseException {
+    public StudentRecordDao createStudentRecord(StudentRecordDTO newStudentRecordDTO) throws ParseException {
         StudentRecord newStudentRecord = convertDTO(newStudentRecordDTO);
-        return studentRecordRepository.save(newStudentRecord);
+        return StudentRecordDao.fromModel(studentRecordRepository.save(newStudentRecord));
     }
 
-    public List<StudentRecord> getAllStudentRecords() {
-        return studentRecordRepository.findAll();
+    public List<StudentRecordDao> getAllStudentRecords() {
+        ArrayList<StudentRecordDao> studentRecordsDao = new ArrayList<StudentRecordDao>();
+        for(StudentRecord studentRecord : studentRecordRepository.findAll()) {
+            studentRecordsDao.add(StudentRecordDao.fromModel(studentRecord));
+        }
+        return studentRecordsDao;
     }
 
-    public List<StudentRecord> getStudentRecordsBySubjectClassIdAndStudentId(Long subjectClassId, Long studentId) {
+    public List<StudentRecordDao> getStudentRecordsBySubjectClassIdAndStudentId(Long subjectClassId, Long studentId) {
         List<StudentRecord> studentRecords = studentRecordRepository.findAll();
         return filterStudentRecordsBySubjectClassAndStudent(studentRecords, subjectClassId, studentId);
     }
 
     public FinalGrade getFinalGradeBySubjectClassIdAndStudentId(Long subjectClassId, Long studentId) throws NoRecordsException {
-        List<StudentRecord> studentRecords = filterStudentRecordsBySubjectClassAndStudent(studentRecordRepository.findAll(), subjectClassId, studentId);
+        List<StudentRecordDao> studentRecords = filterStudentRecordsBySubjectClassAndStudent(studentRecordRepository.findAll(), subjectClassId, studentId);
 
         if(studentRecords.isEmpty()) {
             throw new NoRecordsException("Student: " + studentId + " does not have records of class: " + subjectClassId);
@@ -51,7 +56,7 @@ public class StudentRecordService {
 
         // Get the total of all score percentage
         // Keep track of how many instance of a record type is added
-        for (StudentRecord studentRecord : studentRecords) {
+        for (StudentRecordDao studentRecord : studentRecords) {
             RecordType recordType = studentRecord.getRecordType();
             Double grade = studentRecord.getScorePercentage();
             gradesPerType.put(recordType, gradesPerType.getOrDefault(recordType, 0.00) + grade);
@@ -69,17 +74,17 @@ public class StudentRecordService {
             finalGrade += gradesPerType.get(recordType);
         }
 
-        return new FinalGrade(studentRecords.get(0).getSubjectClass(), studentRecords.get(0).getStudent(), finalGrade);
+        return new FinalGrade(studentRecords.get(0).getSubjectClassId(), studentRecords.get(0).getStudentId(), finalGrade);
     }
 
-    public StudentRecord getStudentRecord(Long id) {
-        return studentRecordRepository.findById(id).orElseThrow();
+    public StudentRecordDao getStudentRecord(Long id) {
+        return StudentRecordDao.fromModel(studentRecordRepository.findById(id).orElseThrow());
     }
 
-    public StudentRecord updateStudentRecord(Long id, StudentRecordDTO updatedStudentRecordDTO) throws ParseException {
+    public StudentRecordDao updateStudentRecord(Long id, StudentRecordDTO updatedStudentRecordDTO) throws ParseException {
         StudentRecord updatedStudentRecord = convertDTO(updatedStudentRecordDTO);
         updatedStudentRecord.setId(id);  
-        return studentRecordRepository.save(updatedStudentRecord);
+        return StudentRecordDao.fromModel(studentRecordRepository.save(updatedStudentRecord));
     }
 
     public void deleteAllStudentRecords() {
@@ -101,11 +106,11 @@ public class StudentRecordService {
         );
     }
 
-    private List<StudentRecord> filterStudentRecordsBySubjectClassAndStudent(List<StudentRecord> studentRecords, Long subjectClassId, Long studentId) {
-        ArrayList<StudentRecord> filteredRecords = new ArrayList<StudentRecord>();
+    private List<StudentRecordDao> filterStudentRecordsBySubjectClassAndStudent(List<StudentRecord> studentRecords, Long subjectClassId, Long studentId) {
+        ArrayList<StudentRecordDao> filteredRecords = new ArrayList<StudentRecordDao>();
         for (StudentRecord studentRecord : studentRecords) {
             if(studentRecord.getSubjectClass().getId() == subjectClassId && studentRecord.getStudent().getId() == studentId) {
-                filteredRecords.add(studentRecord);
+                filteredRecords.add(StudentRecordDao.fromModel(studentRecord));
             }
         }
         return filteredRecords;
